@@ -74,7 +74,7 @@ public class MetroDAO {
 				"FROM connessione " +
 				"WHERE (id_stazP=? AND id_stazA=?) OR " +
 				"(id_stazP=? AND id_stazA=?)" ;
-
+		//perchè non è detto che nel grafo non orientato siano implementati sia l'arco inverso che quello diretto tra 2 stazioni
 		try {
 			Connection conn = DBConnect.getConnection();
 			PreparedStatement st = conn.prepareStatement(sql);
@@ -85,19 +85,20 @@ public class MetroDAO {
 			
 			ResultSet rs = st.executeQuery() ;
 			
-			rs.first();
+			rs.first(); //perchè mi darà una sola riga
 			
 			int conteggio = rs.getInt("cnt") ;
 						
 			conn.close();
 			
-			return (conteggio>0) ;
+			return (conteggio>0) ; // ritorna vero se >0, falso se =0
 			
 		} catch (SQLException e) {
 			throw new RuntimeException("Errore query", e);
 		}
 	}
 	
+	//interroghiamo direttamente il database per avere più efficneza di calcolo per vedere tutte le connessioni -> creo un oggetto connnesione
 	public List<Connessione> getAllConnessioni(List<Fermata> fermate) {
 		String sql = "SELECT  id_connessione, id_linea, id_stazP, id_stazA "
 				+ "FROM connessione "
@@ -127,7 +128,7 @@ public class MetroDAO {
 
 				Connessione c = new Connessione(rs.getInt("id_connessione"),
 						null, // ingnoro la linea, adesso non ci serve
-						fermata_partenza,
+						fermata_partenza,	//ho bisogno dell'oggetto fermata, non dell'id 
 						fermata_arrivo) ;
 				result.add(c);
 			}
